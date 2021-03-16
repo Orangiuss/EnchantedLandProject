@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "643098867066",
+    "project_id": "enchantedland-ae7db",
+    "storage_bucket": "enchantedland-ae7db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643098867066:android:5100cab4aecd6c5176d2c3",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.ProjetJeuDeCarte"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643098867066-n2726818o4v04fj5ffvdhlp2rriqebt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_kvrwhmg8uQCSNFmZYhzR4lHpDoTZkrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643098867066-n2726818o4v04fj5ffvdhlp2rriqebt3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
