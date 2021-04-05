@@ -23,6 +23,8 @@ public class CollectionHandler : MonoBehaviour
 
     public TextMeshProUGUI numeroPageText;
 
+    public static int[] nbrCards;
+
     void Start()
     {
         page = 1;
@@ -72,6 +74,7 @@ public class CollectionHandler : MonoBehaviour
         for (int i = 0; i < nombreCartesAAfficher; i++)
         {
             cardsList[i].thisId = collectionPlayer[i + (((page -1) * 10))];
+            cardsList[i].Initialize();
         }
         numeroPageText.text = page + "/" + nombreDePages;
     }
@@ -96,8 +99,8 @@ public class CollectionHandler : MonoBehaviour
         for (int i = 0; i < nombreCartesAAfficher; i++)
         {
             cardsList[i].thisId = collectionPlayer[i + (((page - 1) * 10))];
+            cardsList[i].Initialize();
         }
-        Debug.Log(nombreCartesAAfficher);
         numeroPageText.text = page + "/" + nombreDePages;
     }
 
@@ -107,6 +110,7 @@ public class CollectionHandler : MonoBehaviour
         RestClient.Get<Collection>(url: databaseURL + localId + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response =>
         {
             collectionPlayer = response.collection;
+            collectionPlayer.Sort();
             nombreDeCartes = collectionPlayer.Count;
             nombreDePages = Mathf.CeilToInt(nombreDeCartes / 10f);
             if (page == 1 && nombreDePages == 1)
@@ -125,6 +129,7 @@ public class CollectionHandler : MonoBehaviour
             for (int i = 0; i < nombreCartesAAfficher; i++)
             {
                 cardsList[i].thisId = collectionPlayer[i + (((page - 1) * 10))];
+                cardsList[i].Initialize();
             }
         }).Catch(error =>
         {

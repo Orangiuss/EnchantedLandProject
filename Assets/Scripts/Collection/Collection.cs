@@ -23,5 +23,18 @@ public class Collection
         collection.Add(5);
         collection.Add(6);
         collection.Add(7);
+        collection.Add(8);
+        collection.Add(9);
+        collection.Add(10);
+        collection.Add(11);
+        collection.Add(12);
+        collection.Add(13);
+        collection.Add(14);
+        collection.Add(15);
+        collection.Add(16);
+        collection.Add(17);
+        collection.Add(18);
+        collection.Add(19);
+        collection.Add(20);
     }
 }

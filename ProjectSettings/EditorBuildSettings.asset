@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ChoixDeck.unity
     guid: 4ec128780a0ddf94b8b6dd361498044c
+  - enabled: 1
+    path: Assets/Scenes/Boutique.unity
+    guid: bdbc148f43a759c4489db6b5c24bd861
   m_configObjects: {}

@@ -30,4 +30,9 @@ public class MainMenu : MonoBehaviour
 	{
 		SceneManager.LoadScene("RegisterLogin");
 	}
+
+	public void Menu()
+	{
+		SceneManager.LoadScene("Menu");
+	}
 }

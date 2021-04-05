@@ -10,6 +10,8 @@ public class DeckObject : MonoBehaviour
 
     public Image image;
     public GameObject heros;
+    public int deckId;
+    public int heroId;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,7 @@ public class DeckObject : MonoBehaviour
         
     }
 
-    public void Initialize(int n, int hero)
+    public void Initialize(int n, int hero, int deckId)
 	{
         if (n != 0)
         {
@@ -31,6 +33,8 @@ public class DeckObject : MonoBehaviour
             this.numberOfCards.text = n + " Cartes";
             this.heros.SetActive(true);
             this.image.sprite = Resources.Load<Sprite>("Heros" + hero);
+            this.deckId = deckId;
+            this.heroId = hero;
         }
         return;
     }

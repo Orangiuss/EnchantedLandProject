@@ -9,15 +9,16 @@ public class MatchmakingHandler : MonoBehaviour
     private string databaseURL = "https://enchantedland-ae7db-default-rtdb.firebaseio.com/matchmaking/";
     private string databaseGamesURL = "https://enchantedland-ae7db-default-rtdb.firebaseio.com/games/";
 
-    private User user = new User();
-    
-    public DeckCollection deck = new DeckCollection();
+    private UserInGame user = new UserInGame();
+
+    private int deckId;
+    private int heroId;
     // Start is called before the first frame update
     void Start()
     {
         if (PlayerPrefs.GetString("localIdPlayer") != null)
         {
-            user.localId = PlayerPrefs.GetString("localIdPlayer"); /*
+            user.turn = PlayerPrefs.GetString("localIdPlayer"); /*
             idToken = PlayerPrefs.GetString("IdTokenPlayer");
             refreshToken = PlayerPrefs.GetString("RefreshToken");
             Debug.Log("Vous etes bien connecté !");
@@ -37,39 +38,61 @@ public class MatchmakingHandler : MonoBehaviour
 
     }
 
+    public void RetourneMenu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
     public void MatchMaking()
     {
-        LancerMatchmaking();
+        if (SelectedDeck.selectedDeck != null)
+        {
+            LancerMatchmaking();
+        }
     }
 
     private void LancerMatchmaking()
     {
-        User userMatch = new User();
-        RestClient.Get<User>(url: databaseURL + "0.json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response =>
+        user.deckId = SelectedDeck.selectedDeck.GetComponent<DeckObject>().deckId;
+        user.heroId = SelectedDeck.selectedDeck.GetComponent<DeckObject>().heroId;
+        string gametoken = CreateRandomString();
+        user.localIdEnnemy = gametoken;
+        UserInGame userMatch = new UserInGame();
+        RestClient.Get<UserInGame>(url: databaseURL + "0.json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response =>
         {
             userMatch = response;
+            PlayerPrefs.SetString("gametoken", userMatch.localIdEnnemy);
             RestClient.Delete(url: databaseURL + "0.json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response2 =>
             {
-                Debug.Log(user.nomUtilisateur + " : " + user.email + ", " + user.localId + ", " + user.motDePasse);
                 UserInGame userLocal = new UserInGame();
                 UserInGame userEnnemy = new UserInGame();
-                userLocal.localIdEnnemy = userMatch.localId;
-                userEnnemy.localIdEnnemy = user.localId;
+                userLocal = user;
+                userEnnemy = userMatch;
+                userLocal.localIdEnnemy = userMatch.turn;
+                userEnnemy.localIdEnnemy = user.turn;
+                PlayerPrefs.SetString("ennemiIdPlayer", userLocal.localIdEnnemy);
                 int rand = Random.Range(0, 1);
                 Debug.Log(rand);
                 if (rand == 0)
                 {
-                    userLocal.turn = user.localId;
-                    userEnnemy.turn = user.localId;
+                    userLocal.turn = user.turn;
+                    userEnnemy.turn = user.turn;
                 }
                 else
                 {
-                    userLocal.turn = userMatch.localId;
-                    userEnnemy.turn = userMatch.localId;
+                    userLocal.turn = userMatch.turn;
+                    userEnnemy.turn = userMatch.turn;
                 }
-                RestClient.Put(url: databaseGamesURL + user.localId + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), userLocal);
-                RestClient.Put(url: databaseGamesURL + userMatch.localId + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), userEnnemy);
-                SceneManager.LoadScene("Game");
+                string turn = userLocal.turn;
+                Game game = new Game();
+                game.turn = turn;
+                game.player1 = userLocal;
+                game.player2 = userEnnemy;
+                PlayerPrefs.SetString("player", "player1");
+                RestClient.Put(url: databaseGamesURL + PlayerPrefs.GetString("gametoken") + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), game).Then(onResolved: response5 =>
+                {
+                    SceneManager.LoadScene("Game");
+                });
             }).Catch(error =>
             {
                 Debug.Log(error);
@@ -77,21 +100,35 @@ public class MatchmakingHandler : MonoBehaviour
         }).Catch(error =>
         {
             Debug.Log(error);
+            PlayerPrefs.SetString("gametoken", gametoken);
             RestClient.Put(url: databaseURL + "0" + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), user);
-            StartCoroutine(MatchMakingObserver());
+            PlayerPrefs.SetString("player", "player2");
+            StartCoroutine(MatchMakingObserver(gametoken));
         });
     }
 
-    private IEnumerator MatchMakingObserver()
+    private IEnumerator MatchMakingObserver(string gametoken)
     {
-        yield return new WaitForSeconds(0.2f);
-        RestClient.Get<UserInGame>(url: databaseGamesURL + user.localId + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response =>
+        yield return new WaitForSeconds(0.05f);
+        RestClient.Get<Game>(url: databaseGamesURL + gametoken + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response =>
         {
             SceneManager.LoadScene("Game");
         }).Catch(error =>
-            {
-                Debug.Log(error);
-                StartCoroutine(MatchMakingObserver());
-            });
+        {
+            Debug.Log(error);
+            StartCoroutine(MatchMakingObserver(gametoken));
+        });
+    }
+
+    private string CreateRandomString(int stringLength = 30)
+    {
+        int _stringLength = stringLength - 1;
+        string randomString = "";
+        string[] characters = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+        for (int i = 0; i <= _stringLength; i++)
+        {
+            randomString = randomString + characters[Random.Range(0, characters.Length)];
+        }
+        return randomString;
     }
 }

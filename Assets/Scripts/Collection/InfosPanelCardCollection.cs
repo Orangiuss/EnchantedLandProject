@@ -18,6 +18,7 @@ public class InfosPanelCardCollection : MonoBehaviour, IPointerClickHandler, IPo
     void Update()
     {
         card.thisId = thisCard.Id;
+        card.Initialize();
     }
 
     public void OnPointerClick(PointerEventData eventData)

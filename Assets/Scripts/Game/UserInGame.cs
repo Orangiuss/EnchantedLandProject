@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 [Serializable] 
 public class UserInGame
@@ -8,13 +9,16 @@ public class UserInGame
     public int hp;
     public int tailleMain;
     public int tailleDeck;
-    public DeckCollection deck;
+    public int deckId;
+    public int heroId;
 
     public UserInGame()
     {
         hp = 30;
-        tailleMain = 5;
+        tailleMain = 4;
         tailleDeck = 30;
+        deckId = 1;
+        heroId = 1;
     }
 
 }

@@ -7,9 +7,9 @@ using TMPro;
 public class PlayerHp : MonoBehaviour
 {
     public TextMeshProUGUI HeroPVText;
-    public static float maxHp;
-    public static float staticHp;
-    public float hp;
+    public static int maxHp;
+    public static int staticHp;
+    public int hp;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,5 +22,11 @@ public class PlayerHp : MonoBehaviour
     {
         hp = staticHp;
         HeroPVText.text = "" + hp; 
+    }
+
+    public void Capitulation()
+	{
+        GameHandler.wait = true;
+        staticHp = 0;
     }
 }

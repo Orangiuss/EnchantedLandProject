@@ -14,42 +14,49 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
 	public void OnBeginDrag(PointerEventData eventData)
 	{
-		placeholder = new GameObject();
-		placeholder.transform.SetParent(this.transform.parent);
-		LayoutElement le = placeholder.AddComponent<LayoutElement>();
-		le.preferredWidth = this.GetComponent<LayoutElement>().preferredWidth;
-		le.preferredHeight = this.GetComponent<LayoutElement>().preferredHeight;
-		le.flexibleHeight = 0;
-		le.flexibleWidth = 0;
+		if (eventData.button == PointerEventData.InputButton.Left && SystemeDeTour.isYourTurn)
+		{
+			placeholder = new GameObject();
+			placeholder.transform.SetParent(this.transform.parent);
+			LayoutElement le = placeholder.AddComponent<LayoutElement>();
+			le.preferredWidth = this.GetComponent<LayoutElement>().preferredWidth;
+			le.preferredHeight = this.GetComponent<LayoutElement>().preferredHeight;
+			le.flexibleHeight = 0;
+			le.flexibleWidth = 0;
 
-		placeholder.transform.SetSiblingIndex( this.transform.GetSiblingIndex() );
+			placeholder.transform.SetSiblingIndex(this.transform.GetSiblingIndex());
 
-		parentToReturnTo = this.transform.parent;
-		this.transform.SetParent(this.transform.parent.parent);
-		this.tag = "Drag";
+			parentToReturnTo = this.transform.parent;
+			this.transform.SetParent(this.transform.parent.parent);
+			this.tag = "Drag";
 
-		x = eventData.position.x - this.transform.position.x;
-		y = eventData.position.y - this.transform.position.y;
+			x = eventData.position.x - this.transform.position.x;
+			y = eventData.position.y - this.transform.position.y;
 
-		GetComponent<CanvasGroup>().blocksRaycasts = false;
-		Debug.Log("OnBeginDrag");
+			GetComponent<CanvasGroup>().blocksRaycasts = false;
+			Debug.Log("OnBeginDrag");
+		}
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
 		//Debug.Log("OnDrag");
-
-		this.transform.position = new Vector3(eventData.position.x - x, eventData.position.y - y);
+		if (eventData.button == PointerEventData.InputButton.Left && SystemeDeTour.isYourTurn)
+		{
+			this.transform.position = new Vector3(eventData.position.x - x, eventData.position.y - y);
+		}
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
+		if (eventData.button == PointerEventData.InputButton.Left && SystemeDeTour.isYourTurn)
+		{
+			GetComponent<CanvasGroup>().blocksRaycasts = true;
+			this.transform.SetParent(parentToReturnTo);
+			this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
+			Debug.Log("OnEndDrag");
 
-		GetComponent<CanvasGroup>().blocksRaycasts = true;
-		this.transform.SetParent(parentToReturnTo);
-		this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
-		Debug.Log("OnEndDrag");
-
-		Destroy(placeholder);
+			Destroy(placeholder);
+		}
 	}
 }

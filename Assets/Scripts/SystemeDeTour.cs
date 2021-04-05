@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class SystemeDeTour : MonoBehaviour
 {
-    public bool isYourTurn;
-    public int yourTurn;
+    public static bool isYourTurn;
+    public bool yourTurn;
     public int yourOppenentTurn;
 
     public Text turnText;
@@ -20,12 +20,12 @@ public class SystemeDeTour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isYourTurn = true;
-        yourTurn = 1;
+        isYourTurn = false;
+        yourTurn = false;
         yourOppenentTurn = 0;
 
-        maxMana = 1;
-        currentMana = 1;
+        maxMana = 0;
+        currentMana = 0;
 
         foreach( GameObject mana in manasObjects)
 		{
@@ -39,34 +39,43 @@ public class SystemeDeTour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        YourTurn();
         if(isYourTurn == true)
 		{
-            turnText.text = "Your turn";
+            turnText.text = "Votre tour";
 		} 
         else
 		{
-            turnText.text = "Oppenent Turn";
+            turnText.text = "Tour de l'ennemi";
         }
         
         manaText.text = currentMana + "/" + maxMana;
         ResetManasObjects();
     }
 
-    public void EndYourTurn()
-	{
+    public void YourTurn()
+    {
         if (isYourTurn == true)
         {
-            isYourTurn = false;
-            yourOppenentTurn++;
+            if(yourTurn == false)
+			{
+                yourTurn = true;
+                if(maxMana != 12) { maxMana++; }
+                currentMana = maxMana;
+                startTurn = true;
+            }
         }
-	}
+        if(isYourTurn == false)
+		{
+            yourTurn = false;
+		}
+    }
 
     public void EndYourOppenentTurn()
     {
         if (isYourTurn == false)
         {
             isYourTurn = true;
-            yourTurn++;
 
             maxMana++;
             currentMana = maxMana;

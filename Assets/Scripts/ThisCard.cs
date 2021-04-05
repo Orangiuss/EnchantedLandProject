@@ -20,6 +20,11 @@ public class ThisCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public int Rarete;
     public int Type;
 
+    //Effets
+    public int drawXcards;
+    public int dealXdamage;
+    public int healXhp;
+
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI costText;
     public TextMeshProUGUI powerText;
@@ -36,36 +41,54 @@ public class ThisCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public int numberOfCardsInDeck;
 
     public bool canBeSummon;
+    public bool plateauFull;
     public bool summoned;
     public GameObject battleZone;
+    public int battleZoneCount;
     public Deck deck;
 
-    public GameObject Serviteur;
+    public Plateau plateau;
+    public GameHandler gameHandler;
+
+    private int nombreOfBetes;
     // Start is called before the first frame update
     void Start()
     {
+        plateauFull = false;
+        gameHandler = GameObject.Find("GameHandler").GetComponent<GameHandler>();
         thisCard = CardDataBase.cardList[thisId];
         numberOfCardsInDeck = Deck.deckSize;
 
         canBeSummon = false;
         summoned = false;
+        battleZone = GameObject.Find("MinionDropArea");
+        Hand = GameObject.Find("Hand");
+        deck = GameObject.Find("DeckPanel").GetComponent<Deck>();
+        plateau = battleZone.GetComponent<Plateau>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Hand = GameObject.Find("Hand");
+        // A refaire la taille maximum !
+        foreach(ServiteurDB serviteur in Plateau.serviteurStatic)
+		{
+            if(serviteur.id == 0) { plateauFull = false; break; } 
+            else { plateauFull = true;  }
+		}
+        //battleZoneCount = battleZone.transform.childCount;
 
         if (this.tag == "Hand2")
         {
-            thisCard = Deck.staticDeck[numberOfCardsInDeck - 1];
+			thisCard = Deck.staticDeck[numberOfCardsInDeck - 1];
+            Deck.staticDeck.RemoveAt(numberOfCardsInDeck - 1);
             numberOfCardsInDeck = numberOfCardsInDeck - 1;
             Deck.deckSize = Deck.deckSize - 1;
             this.tag = "Untagged";
             InitializeThisCard();
         }
 
-        if (SystemeDeTour.currentMana >= Cost && summoned == false)
+        if (SystemeDeTour.currentMana >= Cost && summoned == false && SystemeDeTour.isYourTurn && !plateauFull)
         {
             canBeSummon = true;
         }
@@ -82,12 +105,27 @@ public class ThisCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             gameObject.GetComponent<Draggable>().enabled = false;
         }
 
-        battleZone = GameObject.Find("MinionDropArea");
-
         if(summoned == false && this.transform.parent == battleZone.transform)
 		{
             Summon();
 		}
+
+        if(CardName == "Iris, combattante renarde")
+		{
+            nombreOfBetes = 0;
+            foreach (ServiteurDB serviteur in Plateau.serviteurStatic)
+            {
+                if (CardDataBase.cardList[serviteur.id].Type == 4)
+                {
+                    nombreOfBetes++;
+                }
+            }
+            if(Cost != 12 - nombreOfBetes)
+			{
+                Cost = 12 - nombreOfBetes;
+                costText.text = "" + Cost;
+            }
+        } 
 
     }
 
@@ -112,9 +150,83 @@ public class ThisCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void Summon()
 	{
         SystemeDeTour.currentMana = SystemeDeTour.currentMana - Cost;
-        GameObject serviteur = Instantiate(Serviteur, transform.position, transform.rotation);
-        Serviteur s = serviteur.GetComponent<Serviteur>();
-        s.thisId = thisCard.Id;
+        for (int i = 0; i < 7; i++)
+        {
+            if(Plateau.serviteurStatic[i].id == 0)
+			{
+                Plateau.serviteurStatic[i].id = thisCard.Id;
+                Plateau.serviteurStatic[i].hp = thisCard.PV;
+                Plateau.serviteurStatic[i].pa = thisCard.Power;
+                i = 7;
+            }
+        }
+        
+        // Demoniste Orc :
+        if(CardName == "Demoniste gobelin")
+		{
+            for (int i = 0; i < 7; i++)
+            {
+                if (Plateau.serviteurStatic[i].id == 0)
+                {
+                    Plateau.serviteurStatic[i].id = thisCard.Id + 1;
+                    Plateau.serviteurStatic[i].hp = 1;
+                    Plateau.serviteurStatic[i].pa = 1;
+                    i = 7;
+                }
+            }
+            for (int i = 0; i < 7; i++)
+            {
+                if (Plateau.serviteurStatic[i].id == 0)
+                {
+                    Plateau.serviteurStatic[i].id = thisCard.Id + 1;
+                    Plateau.serviteurStatic[i].hp = 1;
+                    Plateau.serviteurStatic[i].pa = 1;
+                    i = 7;
+                }
+            }
+        }
+
+        // Enfant enchanteur
+        if (CardName == "Enfant enchanteur")
+        {
+            foreach (ServiteurDB serviteur in Plateau.serviteurStatic)
+            {
+                if (CardDataBase.cardList[serviteur.id].Type == 2 && serviteur.id != thisCard.Id)
+                {
+                    serviteur.hp = serviteur.hp + 2;
+                    serviteur.pa = serviteur.pa + 1;
+                }
+            }
+        }
+
+        // Reine naine
+        if (CardName == "Reine naine")
+        {
+            foreach (ServiteurDB serviteur in Plateau.serviteurStatic)
+            {
+                if (CardDataBase.cardList[serviteur.id].Type == 3 && serviteur.id != thisCard.Id)
+                {
+                    serviteur.pa = serviteur.pa + 2;
+                }
+            }
+        }
+
+        // Tueur orc 
+        if (CardName == "Tueur orc")
+        {
+            foreach (ServiteurDB serviteur in PlateauEnnemi.serviteurEnnemiStatic)
+            {
+                serviteur.hp = serviteur.hp - 1;
+                if(serviteur.hp <= 0) { serviteur.id = 0; }
+            }
+        }
+
+
+        deck.Pioche(drawXcards);
+        //PlayerHp.staticHp = PlayerHp.staticHp + healXhp;
+        //if(PlayerHp.staticHp > 30) { PlayerHp.staticHp = 30;  }
+        plateau.UpdatePlateau();
+        gameHandler.UpdatePlateaus();
         Destroy(this.gameObject);
     }
 
@@ -128,6 +240,10 @@ public class ThisCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         CardDescription = thisCard.CardDescription;
         Rarete = thisCard.Rarete;
         Type = thisCard.Type;
+
+        drawXcards = thisCard.drawXcards;
+        dealXdamage = thisCard.dealXdamage;
+        healXhp = thisCard.healXhp;
 
         sprite = thisCard.Image;
 

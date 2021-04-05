@@ -110,7 +110,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -200,6 +200,10 @@ MonoBehaviour:
     CardDescription: 
     Rarete: 0
     Type: 0
+    directAttack: 0
+    drawXcards: 0
+    dealXdamage: 0
+    healXhp: 0
     Image: {fileID: 0}
   thisId: 0
   Id: 0
@@ -210,6 +214,9 @@ MonoBehaviour:
   CardDescription: 
   Rarete: 0
   Type: 0
+  drawXcards: 0
+  dealXdamage: 0
+  healXhp: 0
   nameText: {fileID: 7908072678240379127}
   costText: {fileID: 7908072677749209209}
   powerText: {fileID: 7908072678567187139}
@@ -222,11 +229,13 @@ MonoBehaviour:
   Hand: {fileID: 0}
   numberOfCardsInDeck: 0
   canBeSummon: 0
+  plateauFull: 0
   summoned: 0
   battleZone: {fileID: 0}
+  battleZoneCount: 0
   deck: {fileID: 0}
-  Serviteur: {fileID: 6241637421220880050, guid: 347db80bb059d704fb65b3d0bb963b50,
-    type: 3}
+  plateau: {fileID: 0}
+  gameHandler: {fileID: 0}
 --- !u!114 &6457260149422828737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,8 +848,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 244.87996, y: -494.76}
-  m_SizeDelta: {x: 98.664665, y: 45.102905}
+  m_AnchoredPosition: {x: 244.87996, y: -491.02}
+  m_SizeDelta: {x: 98.664665, y: 35.272705}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7908072677546813520
 CanvasRenderer:
@@ -899,12 +908,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12.99
+  m_fontSize: 15
   m_fontSizeBase: 12.99
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 10
+  m_fontSizeMax: 15
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
@@ -1049,7 +1058,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -1169,12 +1178,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12.99
+  m_fontSize: 11.8
   m_fontSizeBase: 12.99
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 8
+  m_fontSizeMax: 15
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1319,7 +1328,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -1453,7 +1462,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}

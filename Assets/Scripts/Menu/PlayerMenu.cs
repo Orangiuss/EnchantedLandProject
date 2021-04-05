@@ -73,9 +73,9 @@ public class PlayerMenu : MonoBehaviour
         RestClient.Post("https://identitytoolkit.googleapis.com/v1/accounts:delete?key=" + AuthKey, userData).Then(
         response =>
         {
-            RestClient.Delete(url: databaseURL + "users/" + PlayerPrefs.GetString("localIdPlayer") + ".json").Then(onResolved: response2 =>
+            RestClient.Delete(url: databaseURL + "users/" + PlayerPrefs.GetString("localIdPlayer") + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response2 =>
             {
-                RestClient.Delete(url: databaseURL + "collections/" + PlayerPrefs.GetString("localIdPlayer") + ".json").Then(onResolved: response3 =>
+                RestClient.Delete(url: databaseURL + "collections/" + PlayerPrefs.GetString("localIdPlayer") + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer")).Then(onResolved: response3 =>
                 {
                     SceneManager.LoadScene("RegisterLogin");
                     Debug.Log("Compte supprimé");
