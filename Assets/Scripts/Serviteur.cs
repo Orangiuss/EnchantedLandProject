@@ -42,6 +42,8 @@ public class Serviteur : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     public bool healEffect;
     public bool damageEffect;
 
+    public bool effectGo;
+
     public bool summonedAttack;
 
     public GameHandler gameHandler;
@@ -49,6 +51,7 @@ public class Serviteur : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     void Start()
     {
         // Initialisation du serviteur 
+        effectGo = true;
         healEffect = false;
         damageEffect = false;
         gameHandler = GameObject.Find("GameHandler").GetComponent<GameHandler>();
@@ -73,10 +76,12 @@ public class Serviteur : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     {
         if(healEffect && !SystemeDeTour.isYourTurn)
 		{
+            effectGo = false;
             healEffect = false;
         }
         if (damageEffect && !SystemeDeTour.isYourTurn)
         {
+            effectGo = false;
             damageEffect = false;
         }
         if (summonedAttack && SystemeDeTour.isYourTurn && !ennemi)
@@ -94,6 +99,8 @@ public class Serviteur : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
             canAttack = false;
             attackBorder.SetActive(false);
         }
+        if (healXhp > 0 && !ennemi && SystemeDeTour.isYourTurn && effectGo) { healEffect = true; }
+        if (dealXdamage > 0 && !ennemi && SystemeDeTour.isYourTurn && effectGo) { damageEffect = true; }
         healBorder.SetActive(healEffect);
         damageBorder.SetActive(damageEffect);
     }

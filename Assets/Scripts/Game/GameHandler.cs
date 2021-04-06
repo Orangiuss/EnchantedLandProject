@@ -76,6 +76,7 @@ public class GameHandler : MonoBehaviour
                 victoryText.color = Color.red;
                 victoryText.text = "Défaite !";
                 panelVictory.SetActive(true);
+                PutFinish();
             }
             if (EnnemyHp.staticHp <= 0)
             {
@@ -83,6 +84,7 @@ public class GameHandler : MonoBehaviour
                 victoryText.color = Color.green;
                 victoryText.text = "Victoire !";
                 panelVictory.SetActive(true);
+                PutFinish();
             }
         }
     }
@@ -107,6 +109,16 @@ public class GameHandler : MonoBehaviour
             RestClient.Put(url: databaseURL + player + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), userPut);
         }
         StartCoroutine(PutToDataBase());
+    }
+
+    private void PutFinish()
+	{
+        cardsInHand = Hand.transform.childCount;
+        userPut = user;
+        userPut.tailleMain = cardsInHand;
+        userPut.hp = PlayerHp.staticHp;
+        userPut.tailleDeck = Deck.deckSize;
+        RestClient.Put(url: databaseURL + player + ".json?auth=" + PlayerPrefs.GetString("IdTokenPlayer"), userPut);
     }
 
     private void DataFromDataBase()
